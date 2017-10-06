@@ -183,7 +183,8 @@ if (process.env.NODE_ENV === 'production') {
       devtoolFallbackModuleFilenameTemplate: '~[resource-path]?[loaders]'
     },
     entry: [
-      'stack-source-map/register'
+      'stack-source-map/register',
+      './reporter.spec.js'
     ].concat(
       glob.sync('./src/main/webapp/**/*spec.js')
           .map(function (spec) { return path.resolve(spec) })
