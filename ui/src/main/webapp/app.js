@@ -22,10 +22,10 @@ import fonts from 'webpack-fonts'
 const App = ({ children }) => (
   <Provider store={store}>
     <ApolloProvider client={client}>
-      <MuiThemeProvider>
+      <MuiThemeProvider rootSelector={(state) => state.get('theme')}>
         <div className={fonts.roboto}>
           <Backdrop>
-            <AdminAppBar />
+            <AdminAppBar rootSelector={(state) => state.get('theme')} />
             <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 20px' }}>{children}</div>
           </Backdrop>
           <DevTools />
@@ -35,14 +35,21 @@ const App = ({ children }) => (
   </Provider>
 )
 
+const SourcesWizard = Sources(ddfSources)
+
 export const routes = {
   path: '/',
   component: App,
   indexRoute: { component: Home },
   childRoutes: [
-    { path: 'ldap', component: Ldap },
-    { path: 'sources', component: Sources(ddfSources) },
-    { path: 'web-context-policy-manager', component: Wcpm },
+    { path: 'ldap', component: () => <Ldap rootSelector={(state) => state.get('wizard')} /> },
+    {
+      path: 'sources',
+      component: () => {
+        return <SourcesWizard rootSelector={(state) => state.get('wizard')} />
+      }
+    },
+    { path: 'web-context-policy-manager', component: () => <Wcpm rootSelector={(state) => state.get('wcpm')} /> },
     { path: 'graphiql', component: GraphiQL }
   ]
 }
