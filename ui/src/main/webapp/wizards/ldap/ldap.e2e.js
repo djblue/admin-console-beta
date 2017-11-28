@@ -12,7 +12,7 @@ import { Provider } from 'react-redux'
 import client from '../../client'
 import { ApolloProvider } from 'react-apollo'
 
-import reducer, { getWizard } from '../../reducer'
+import reducer, { getWizard, getTheme } from '../../reducer'
 
 import DevTools from 'admin-redux-devtools'
 const instrument = require('admin-redux-devtools/dev-tools').default.instrument
@@ -29,7 +29,7 @@ const Shell = ({ store, client, children }) => (
   <div style={{ maxWidth: 800, margin: '100px auto' }}>
     <Provider store={store}>
       <ApolloProvider client={client}>
-        <MuiThemeProvider>
+        <MuiThemeProvider rootSelector={getTheme}>
           <div>
             {children}
             <DevTools />
@@ -52,7 +52,7 @@ const edit = (select, ...args) => doTo(select, 0, 'onEdit', ...args)
 const editAt = (select, at, ...args) => doTo(select, at, 'onEdit', ...args)
 const next = () => click('Next')
 
-describe('<LdapWizard />', () => {
+describe('<LdapWizard />', function () {
   const store = createStore((state, action) => {
     if (action.type === 'RESET') {
       return action.state
@@ -65,19 +65,19 @@ describe('<LdapWizard />', () => {
   const snapshots = {}
   const log = (...args) => null
 
-  it('should mount <LdapWizard />', () => {
-    wrapper = window.wrapper = mount(
+  it('should mount <LdapWizard />', function () {
+    wrapper = window.ldapWizard = mount(
       <Shell client={client} store={store}>
         <LdapWizard rootSelector={getWizard} />
       </Shell>,
-      { attachTo: window.__test }
+      { attachTo: window.document.getElementById('here') }
     )
   })
 
   const _it = (spec, actions) => it(spec, async () => {
     for (let i = 0; i < actions.length; i++) {
       const { type, select, at = 0, prop, args, name } = actions[i]
-      // await sleep(100) // for debugging
+      await sleep(100) // for debugging
       switch (type) {
         case 'snapshot':
           snapshots[name] = store.getState()

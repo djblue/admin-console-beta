@@ -38,7 +38,7 @@ const withContainer = (Component, state = {}) => class extends React.Component {
   }
 }
 
-describe('admin-wizard', () => {
+describe.only('admin-wizard', () => {
   it('should clear shared state on wizard un-mount', (done) => {
     const clearShared = () => done()
 

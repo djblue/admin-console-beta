@@ -26,6 +26,7 @@ import Drawer from 'material-ui/Drawer'
 import MenuItem from 'material-ui/MenuItem'
 import Paper from 'material-ui/Paper'
 import Toggle from 'material-ui/Toggle'
+import AutoComplete from 'material-ui/AutoComplete'
 
 import Pass from 'material-ui/svg-icons/action/check-circle'
 import Fail from 'material-ui/svg-icons/navigation/cancel'
@@ -118,14 +119,17 @@ class Reporter extends Component {
     super(props);
     this.state = {
       open: false,
+      searchText: '',
       show: Set(['pass', 'fail', 'pending', 'skip'])
     }
   }
   render() {
     const { tests } = this.props
-    const { open, show } = this.state
+    const { open, searchText, show } = this.state
 
     const s = stats(tests)
+
+    const dataSource = tests.map((test) => test.get('path').get(1)).toJS()
 
     const suites = tests
       .filter((test) => show.has(test.get('state')))
@@ -183,6 +187,14 @@ class Reporter extends Component {
         `}</style>
         <div style={{ width: 960, margin: '0 auto', padding: '20px 0' }}>
           <pre style={{ margin: 0 }}>{JSON.stringify(s)}</pre>
+          <AutoComplete
+            fullWidth
+            openOnFocus
+            searchText={searchText}
+            dataSource={dataSource}
+            onUpdateInput={(searchText) => this.setState({ searchText })}
+            floatingLabelText='Type anything'
+          />
           <RenderContext />
           {suites.entrySeq().map(([path, suite], key) => {
             const fragments = path.filter((s) => s !== '')
