@@ -180,14 +180,14 @@ if (process.env.NODE_ENV === 'production') {
       devtoolFallbackModuleFilenameTemplate: '~[resource-path]?[loaders]'
     },
     entry: [
-      'stack-source-map/register',
-      './reporter.spec.js'
+      //'react-hot-loader/patch',
+      'stack-source-map/register'
     ].concat(
       [].concat(
         glob.sync('./src/main/webapp/**/*spec.js'),
         glob.sync('./src/main/webapp/**/*e2e.js')
       ).map(function (spec) { return path.resolve(spec) })
-    ),
+    ).concat('./reporter.js'),
     devServer: {
       noInfo: true,
       contentBase: 'src/main/resources/',
@@ -204,6 +204,7 @@ if (process.env.NODE_ENV === 'production') {
     },
     plugins: [
       new HtmlWebpackPlugin(),
+      new webpack.NamedModulesPlugin(),
       new webpack.HotModuleReplacementPlugin()
     ],
     module: {
